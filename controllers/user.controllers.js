@@ -6,12 +6,12 @@ import bcrypt from "bcryptjs";
 import Session from "../model/sessions.model.js";
 
 // create tokens funcation
-async function createTokens(user) {
+export async function createTokens(user) {
   const accessToken = await jwt.sign(
     { userId: user._id },
     process.env.JWT_ACCESS_SECRET,
     {
-      expiresIn: "15m",
+      expiresIn: "1m",
     }
   );
   const refreshToken = await jwt.sign(
@@ -206,6 +206,7 @@ const logOutUser = async (req, res) => {
     if (refreshToken) {
       await Session.findOneAndDelete({ refreshToken });
       res.clearCookie("refreshToken");
+      res.clearCookie("accessToken");
       return res.status(200).json({
         message: "Done",
         success: true,
